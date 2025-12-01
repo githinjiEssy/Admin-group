@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* small custom */
+body { @apply bg-slate-50 text-slate-900; }
+.app-container { @apply min-h-screen flex; }
+.sidebar { @apply w-72 bg-white shadow p-4; }
+.main { @apply flex-1 p-6; }
+.topbar { @apply flex items-center justify-between mb-6; }
+.card { @apply bg-white rounded-lg shadow p-4; }
+.table { @apply w-full text-sm; }
+.link-btn { @apply text-indigo-600 hover:text-indigo-800 underline cursor-pointer; }

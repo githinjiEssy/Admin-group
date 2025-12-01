@@ -1,0 +1,60 @@
+import React, { useEffect, useState } from 'react'
+import { api } from '../../api.js'
+import { useData } from '../../context/DataContext.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
+
+export default function Issues(){
+  const [issues, setIssues] = useState([])
+  const { users, courses } = useData()
+  const { user } = useAuth()
+
+  const load = async () => setIssues(await api.getIssues())
+
+  useEffect(()=>{ load() }, [])
+
+  const resolve = async (id) => {
+    await api.updateIssueStatus(id, 'resolved')
+    await load()
+  }
+
+  const messageLecturer = async (issue) => {
+    // find lecturer for course if exists
+    if (!issue.courseId) return alert('No course attached to issue; message a lecturer manually.')
+    const dbCourses = await api.listCourses()
+    const c = dbCourses.find(x=>x.id===issue.courseId)
+    if (!c || !c.lecturerId) return alert('No lecturer assigned to that course')
+    const msg = prompt('Message to lecturer regarding this issue:')
+    if (!msg) return
+    await api.sendMessageToLecturer({ lecturerId: c.lecturerId, issueId: issue.id, message: msg, adminId: user.id })
+    alert('Message sent')
+  }
+
+  return (
+    <div>
+      <h2 className="text-2xl mb-4">Student Issues</h2>
+      {issues.length === 0 && <p>No issues.</p>}
+      {issues.map(i => {
+        const student = users.find(u=>u.id===i.studentId)
+        const course = courses.find(c=>c.id===i.courseId)
+        return (
+          <div key={i.id} className="card mb-3">
+            <div className="flex justify-between items-center">
+              <div>
+                <div className="font-semibold">{student?.name} ({student?.email})</div>
+                <div className="text-sm text-slate-600">{i.issueType} — {i.createdAt}</div>
+                <div className="mt-2">{i.description}</div>
+                {course && <div className="mt-1 text-sm">Course: {course.code} - {course.title}</div>}
+                <div className="mt-2">Status: <strong>{i.status}</strong></div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                {course && <button className="bg-indigo-600 text-white px-3 py-1 rounded" onClick={()=>messageLecturer(i)}>Message Lecturer</button>}
+                <button className="bg-green-600 text-white px-3 py-1 rounded" onClick={()=>resolve(i.id)}>Mark Resolved</button>
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}

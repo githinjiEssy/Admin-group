@@ -1,0 +1,7 @@
+/* Minimal styles to make the app readable. Replace with Tailwind setup if you want. */
+body { font-family: Inter, system-ui, Arial, sans-serif; margin: 0; padding: 0; background: #f9fafb; color: #111827; }
+.container { max-width: 900px; margin: 0 auto; }
+.card { display:block; padding:1rem; border:1px dashed #ccc; border-radius:6px; text-align:center; background:white; }
+input, select, button { display:block; margin:8px 0; padding:8px; width:100%; box-sizing: border-box; }
+.prose { background: white; padding: 1rem; border-radius: 6px; }
+nav .container { max-width: 900px; }
